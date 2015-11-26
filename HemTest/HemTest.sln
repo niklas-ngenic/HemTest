@@ -5,7 +5,9 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtistInfoRepository", "ArtistInfo\ArtistInfoRepository.csproj", "{EEB9D631-AC1D-42CC-AE6D-DAD71B1C35E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtistInfoRepository.Test", "ArtistInfo.Test\ArtistInfoRepository.Test.csproj", "{F780B266-D57F-4B48-B598-8843C505F960}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtistInfoRepository.UnitTest", "ArtistInfo.Test\ArtistInfoRepository.UnitTest.csproj", "{F780B266-D57F-4B48-B598-8843C505F960}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtistInfoRepository.IntegrationTests", "ArtistInfoRepository.IntegrationTests\ArtistInfoRepository.IntegrationTests.csproj", "{70F166DB-DDD0-4039-8F94-BC1E77EBC86A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{F780B266-D57F-4B48-B598-8843C505F960}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F780B266-D57F-4B48-B598-8843C505F960}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F780B266-D57F-4B48-B598-8843C505F960}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70F166DB-DDD0-4039-8F94-BC1E77EBC86A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70F166DB-DDD0-4039-8F94-BC1E77EBC86A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70F166DB-DDD0-4039-8F94-BC1E77EBC86A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70F166DB-DDD0-4039-8F94-BC1E77EBC86A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

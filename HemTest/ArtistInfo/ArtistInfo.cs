@@ -6,14 +6,28 @@ namespace ArtistInfoRepository
 {
     public class ArtistInfo
     {
+        private ICollection<ArtistInfoReleaseGroup> _releaseGroups;
+
+        private ICollection<ArtistInfoRelation> _relations;
+
         public Guid Id { get; set; }
 
         public string Description { get; set; }
 
-        public ICollection<ArtistInfoRelation> Relations { get; set; }
+        public string Name { get; set; }
+
+        public ICollection<ArtistInfoRelation> Relations
+        {
+            get { return _relations ?? (_relations = new List<ArtistInfoRelation>()); }
+            set { _relations = value; }
+        }
 
         [JsonProperty("release-groups")]
-        public ICollection<ArtistInfoReleaseGroup> ReleaseGroups { get; set; }
+        public ICollection<ArtistInfoReleaseGroup> ReleaseGroups
+        {
+            get { return _releaseGroups ?? (_releaseGroups = new List<ArtistInfoReleaseGroup>()); }
+            set { _releaseGroups = value; }
+        }
     }
 
     public class ArtistInfoRelation

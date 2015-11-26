@@ -45,14 +45,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArtistInfo.cs" />
-    <Compile Include="ArtistInfoProvider.cs" />
+    <Compile Include="ArtistInfoNotFoundException.cs" />
+    <Compile Include="MusicBrainzDataAggregator.cs" />
     <Compile Include="CoverArtArchiveClient.cs" />
     <Compile Include="IAlbumCoverArtClient.cs" />
     <Compile Include="IArtistDescriptionClient.cs" />
     <Compile Include="IArtistInfoClient.cs" />
-    <Compile Include="IArtistInfoProvider.cs" />
+    <Compile Include="IArtistInfoAggregator.cs" />
     <Compile Include="MusicBrainzClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WikipediaArtistInfoClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -6,13 +6,14 @@ using System.Collections;
 
 namespace ArtistInfoRepository
 {
-    public class ArtistInfoProvider : IArtistInfoProvider
+    public class MusicBrainzDataAggregator : IArtistInfoAggregator
     {
+        private const string WIKIPEDIA_TYPE_IDENTIFIER = "wikipedia";
         private readonly IAlbumCoverArtClient _albumCoverArtClient;
         private readonly IArtistDescriptionClient _artistDescriptionClient;
         private readonly IArtistInfoClient _artistInfoClient;
 
-        public ArtistInfoProvider(IArtistInfoClient artistInfoClient,
+        public MusicBrainzDataAggregator(IArtistInfoClient artistInfoClient,
             IArtistDescriptionClient artistDescriptionClient,
             IAlbumCoverArtClient albumCoverArtClient)
         {
@@ -25,6 +26,11 @@ namespace ArtistInfoRepository
         {
             var artistInfo = await _artistInfoClient.GetAsync(MBID);
 
+            if (artistInfo == null)
+            {
+                throw new ArtistInfoNotFoundException();
+            }
+
             Task descriptionTask = SetDescriptionAsync(artistInfo);
             IEnumerable<Task> albumArtTasks = artistInfo.ReleaseGroups.Select(x => SetAlbumArtUrlAsync(x));
 
@@ -36,11 +42,22 @@ namespace ArtistInfoRepository
 
         private async Task SetDescriptionAsync(ArtistInfo artistInfo)
         {
-            //TODO: Must extract wikipedia name to be used in api call
-            var descriptionUrl = artistInfo.Relations.FirstOrDefault(x => x.Type == "wikipedia").Url.Resource;
-            var description = await _artistDescriptionClient.GetAsync(descriptionUrl);
-            artistInfo.Description = description;
+            var wikipediaRelation = artistInfo.Relations.FirstOrDefault(x => x.Type == WIKIPEDIA_TYPE_IDENTIFIER);
+            if (wikipediaRelation != null)
+            {
+                var wikipediaIdentifier = GetWikipediaIdentifier(wikipediaRelation.Url.Resource);
+                var description = await _artistDescriptionClient.GetAsync(wikipediaIdentifier);
+                if (description != null)
+                {
+                    artistInfo.Description = description;
+                }
+            }
             return;
+        }
+
+        private string GetWikipediaIdentifier(string wikipediaResource)
+        {
+            return wikipediaResource.Split('/').Last();
         }
 
         private async Task SetAlbumArtUrlAsync(ArtistInfoReleaseGroup releaseGroup)

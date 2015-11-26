@@ -1,98 +1,19 @@
-﻿using System;
+﻿using ArtistInfoRepository;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Net.Http;
 using Newtonsoft.Json;
-using Moq;
-using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Diagnostics;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ArtistInfoRepository.Test
+namespace ArtistInfoRepository.UnitTests
 {
+    // TODO: Delete when finished
     [TestClass]
-    public class UnitTest1
+    public class REPL
     {
-        ArtistInfoProvider target;
-        Mock<IArtistInfoClient> artistInfoClient;
-        Mock<IArtistDescriptionClient> artistDescriptionClient;
-        Mock<IAlbumCoverArtClient> albumCoverArtClient;
-
-        [TestInitialize]
-        public void Initialize()
-        {
-            artistInfoClient = new Mock<IArtistInfoClient>();
-            artistDescriptionClient = new Mock<IArtistDescriptionClient>();
-            albumCoverArtClient = new Mock<IAlbumCoverArtClient>();
-            target = new ArtistInfoProvider(artistInfoClient.Object,
-                artistDescriptionClient.Object,
-                albumCoverArtClient.Object);
-        }
-
-        [TestMethod]
-        public async Task Returns_ArtistInfo_With_Description_And_AlbumCoverArtUrls()
-        {
-            // Arrange
-            Guid artistGuid = Guid.NewGuid();
-            Guid album1Id = Guid.NewGuid();
-            Guid album2Id = Guid.NewGuid();
-            string artistDescriptionUrl = "descriptionUrl";
-            ArtistInfo artistInfo = new ArtistInfo()
-            {
-                Id = artistGuid,
-                Description = string.Empty,
-                Relations = new List<ArtistInfoRelation>()
-                {
-                    new ArtistInfoRelation() {
-                    Type = "wikipedia",
-                    Url = new ArtistInfoRelationUrl() {
-                        Id = Guid.NewGuid(),
-                        Resource = artistDescriptionUrl
-                        }
-                    }
-                },
-                ReleaseGroups = new List<ArtistInfoReleaseGroup>()
-                {
-                    new ArtistInfoReleaseGroup()
-                    {
-                        Id = album1Id,
-                        CovertArtUrl = string.Empty, 
-                        PrimaryType = "Album",
-                        Title = "Album1"
-                    }, 
-                    new ArtistInfoReleaseGroup()
-                    {
-                        Id = album2Id,
-                        CovertArtUrl = string.Empty,
-                        PrimaryType = "Album",
-                        Title = "Album2"
-                    }
-                }
-            };
-
-            artistInfoClient.Setup(x => x.GetAsync(It.Is<Guid>(y => y == artistGuid)))
-                .Returns(Task.FromResult(artistInfo));
-
-            artistDescriptionClient.Setup(x => x.GetAsync(It.Is<string>(y => y == artistDescriptionUrl)))
-                .Returns(Task.FromResult("artistDescription"));
-
-            albumCoverArtClient.Setup(x => x.GetAsync(It.Is<Guid>(y => y == album1Id)))
-                .Returns(Task.FromResult("album1CoverUrl"));
-            albumCoverArtClient.Setup(x => x.GetAsync(It.Is<Guid>(y => y == album2Id)))
-                .Returns(Task.FromResult("album2CoverUrl"));
-
-            // Act
-            var result = await target.GetArtistInfoAsync(artistGuid);
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(result.Description, "artistDescription");
-            Assert.AreEqual(2, result.ReleaseGroups.Count());
-            Assert.IsTrue(result.ReleaseGroups.Any(x => x.CovertArtUrl == "album1CoverUrl"));
-            Assert.IsTrue(result.ReleaseGroups.Any(x => x.CovertArtUrl == "album2CoverUrl"));
-        }
-
         [TestMethod]
         public void Can_Parse_MusicQuizJsonResponse()
         {
@@ -101,20 +22,18 @@ namespace ArtistInfoRepository.Test
         }
 
         [TestMethod]
+        public void Can_Extract_WikipediaDescription()
+        {
+            string json = @"{""batchcomplete"":"""",""query"":{""normalized"":[{""from"":""Pulp_(band)"",""to"":""Pulp(band)""}],""pages"":{""82116"":{""pageid"":82116,""ns"":0,""title"":""Pulp(band)"",""extract"":"" < p >< b > Pulp </ b > were an English rock band formed in Sheffield in 1978.Their best - known line - up from their heyday (1994\u20131996) consisted of Jarvis Cocker (vocals, guitar), Candida Doyle(keyboards), Russell Senior(guitar, violin), Mark Webber(guitar, keyboards), Steve Mackey(bass) and Nick Banks(drums).Senior quit in 1996 and returned for tours in 2011, while Leo Abrahams had been a touring member of the band since they reunited in 2011, contributing electric and acoustic guitar.</ p >\n<p> Throughout the 1980s, the band struggled to find success, but gained prominence in the UK in the mid-1990s with the release of the albums<i> His 'n' Hers </ i > in 1994 and particularly < i > Different Class </ i > in 1995, which reached the number one spot in the UK Albums Chart. < i > Different Class </ i > spawned four top ten singles, including \""Common People\"" and \""Sorted for E's &amp; Wizz\"", both of which reached number two in the UK Singles Chart. Pulp's musical style during this period consisted of disco influenced pop-rock coupled with \""kitchen sink drama\""-style lyrics. Jarvis Cocker and the band became reluctant figures in the Britpop movement, and were nominated for the Mercury Music Prize in 1994 for <i>His 'n' Hers</i>; they won the prize in 1996 for <i>Different Class</i> and were nominated again in 1998 for <i>This Is Hardcore</i>. They headlined the Pyramid Stage of the Glastonbury Festival twice.</p>\n<p>The band released <i>We Love Life</i>, in 2001, after which they entered an extended hiatus, having sold more than 10 million records.</p>\n<p>Pulp reunited and played live again in 2011, with dates at the Isle of Wight Festival, Reading and Leeds Festivals, Pohoda (music festival), Sziget Festival, Primavera Sound, the Exit festival, and the Wireless Festival. A number of additional concert dates have since been added to their schedule.</p>\n<p>In January 2013 Pulp released \""After You\"", a re-recording of a <i>We Love Life</i> demo track, as a digital download single. It was the band's first single release since \""Bad Cover Version\"" in 2002.</p>\n<p>On 9 March 2014 Pulp and filmmaker Florian Habicht premiered the feature documentary <i>Pulp: A Film about Life, Death &amp; Supermarkets</i> at SXSW Music and Film Festival in Austin, Texas. The film has been touring the international film festival circuit and will be released theatrically by Oscilloscope Laboratories in the USA in November 2014. It is the first film about Pulp (and Sheffield) that has been made in collaboration with the band.</p>\n<p></p>""}}}}";
+            var extract = (string)JObject.Parse(json)["query"]["pages"].First.First["extract"];
+            Assert.IsFalse(string.IsNullOrEmpty(extract));
+        }
+
+        [TestMethod]
         public async Task Can_Get_AlbumArtCoverUrl()
         {
             CoverArtArchiveClient client = new CoverArtArchiveClient();
             await client.GetAsync(Guid.Parse("178b993e-fa9c-36d3-9d73-c5a8ba0c748d"));
-        }
-
-        [TestMethod]
-        public async Task Test()
-        {
-            IArtistInfoProvider artistInfoProvider = new ArtistInfoProvider(new MusicBrainzClient(), null, new CoverArtArchiveClient());
-            var watch = Stopwatch.StartNew();
-            var content = await artistInfoProvider.GetArtistInfoAsync(Guid.Parse("5b11f4ce-a62d-471e-81fc-a69a8278c7da"));
-            watch.Stop();
-            Console.WriteLine(watch.ElapsedMilliseconds / 1000);
         }
     }
 }
