@@ -19,6 +19,7 @@ namespace ArtistInfo.SelfHost
             using (WebApp.Start<Startup>(url: baseAddress))
             {
                 Console.WriteLine(string.Format("Serving Api on address: {0}", baseAddress));
+                Console.WriteLine("Press enter to exit");
                 Console.ReadLine();
             }
         }
